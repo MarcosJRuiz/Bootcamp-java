@@ -10,30 +10,33 @@ import org.json.JSONObject;
 
 public class Api {
 
+    static String apiKey = "Inserir valor da sua API key";
+
     public static String getLatLon(String cidade) {
         String retorno = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet get = new HttpGet("http://api.openweathermap.org/geo/1.0/direct?q="+ cidade +"&appid=7c063ca2d37c75de715cdc148c9b6151");
+            HttpGet get = new HttpGet("http://api.openweathermap.org/geo/1.0/direct?q=" + cidade + "&appid=" + apiKey);
             HttpResponse response = client.execute(get);
             String resp = EntityUtils.toString(response.getEntity());
-            System.out.println(resp);
-            JSONObject obj = new JSONObject(resp.replace("[","").replace("]",""));
-            System.out.println(obj.getBigDecimal("lat"));
-            System.out.println(obj.getBigDecimal("lon"));
+//            System.out.println(resp);
+            JSONObject obj = new JSONObject(resp.replace("[", "").replace("]", ""));
+            System.out.println("valor da lat: " + obj.getBigDecimal("lat"));
+            System.out.println("valor da lon: " + obj.getBigDecimal("lon"));
             retorno = "lat="
                     .concat(String.valueOf(obj.get("lat")))
                     .concat("&lon=")
                     .concat(String.valueOf(obj.get("lon")));
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return retorno;
 
     }
+
     public static String currentWeather(String cidade) {
         String retorno = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            String uri = "https://api.openweathermap.org/data/2.5/weather?"+getLatLon(cidade)+"&appid=7c063ca2d37c75de715cdc148c9b6151";
+            String uri = "https://api.openweathermap.org/data/2.5/weather?" + getLatLon(cidade) + "&appid=" + apiKey;
             HttpGet get = new HttpGet(uri);
             HttpResponse response = client.execute(get);
             String resp = EntityUtils.toString(response.getEntity());
@@ -41,9 +44,10 @@ public class Api {
 
             System.out.println(obj.getJSONObject("main"));
             JSONObject main = obj.getJSONObject("main");
-            System.out.println(main.get("temp"));
+            System.out.println("Retorno da api com o valor da temperatura: " + main.get("temp"));
+
             retorno = String.valueOf(obj.get("name"));
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return retorno;
